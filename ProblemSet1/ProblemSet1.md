@@ -459,8 +459,16 @@ Write an uncurried F# function cartesian (xs, ys) that takes as input two lists 
   > cartesian (["a"; "b"; "c"], [1; 2]);;
 	    val it : (string * int) list =
 	    [("a", 1); ("b", 1); ("c", 1); ("a", 2); ("b", 2); ("c", 2)]
-	  
+```
 
+```
+let rec cartesian xs ys = 
+  match xs, ys with
+  | _, [] -> []
+  | [], _ -> []
+  | x::xs', _ -> (List.map (fun y -> x, y) ys) @ (cartesian xs' ys)
+```
+```
 The following problems are intended to deepen your mastery of the Checklist for Programming with Recursion:
 
     Section 01: Checklist for Programming with Recursion
@@ -480,6 +488,15 @@ An F# list can be thought of as representing a set, where the order of the eleme
 	  
 
 Note that you can order the elements of the powerset however you wish.
+```
+
+```
+let rec powerset = 
+   function
+   | [] -> [[]]
+   | (x::xs) -> 
+      let xss = powerset xs 
+      List.map (fun xs' -> x::xs') xss @ xss
 ```
 
 ### Q24
@@ -509,6 +526,22 @@ Write an efficient F# function to compute the transpose of an m-by-nmatrix:
 	  
 
 Assume that all the rows in the matrix have the same length.
+```
+
+```
+let rec transpose matrix = 
+  match matrix with   // matrix is a list<list<int>>
+  | row::rows ->      // case when the list of rows is non-empty
+    match row with    // rows is a list<int>
+    | col::cols ->    // case when the row is non-empty
+      // Take first elements from all rows of the matrix
+      let first = List.map List.head matrix
+      // Take remaining elements from all rows of the matrix
+      // and then transpose the resulting matrix
+      let rest = transpose (List.map List.tail matrix) 
+      first :: rest
+    | _ -> []
+  | _ -> [] 
 ```
 
 ### Q25
