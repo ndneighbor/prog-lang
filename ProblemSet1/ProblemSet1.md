@@ -322,6 +322,29 @@ Finally, note that your functions should always return fractions in lowest terms
 	    | (a,0) -> a
 	    | (a,b) -> gcd (b, a % b)
 ```
+
+Answer
+
+```fsharp
+//Greatest Common Denominator
+let rec gcd (x, y) = 
+    if y = 0 then x
+    else gcd (y, (x % y));;
+
+//Least Common Multiple
+let lcm x y = (x * y) / (gcd (x, y));;
+
+//Add Fractions
+let (.+) (a,b) (c,d) =
+    let x = gcd(((((lcm b d)  / b) * a) + (((lcm b d)  / d) * c))  ,lcm b d)
+    (((((lcm b d)  / b) * a) + (((lcm b d)  / d) * c)) / x  ,(lcm b d) / x);;
+
+//Multiply Fractions
+let (.*) (a,b) (c,d) = 
+    let x = gcd ((a * b), (c * d))
+    ((a * b)/x, (c * d)/x);;
+    
+```
 ### Q17
 
 ```
@@ -332,6 +355,11 @@ Write an F# function revlists xs that takes a list of lists xs and reverses all 
 
 Hint: This takes just one line of code, using List.map and List.rev.
 ```
+
+```
+let revlists xs = 
+    List.map (List.rev) xs;;
+```
 ### Q18
 ```
 Write an F# function interleave(xs,ys) that interleaves two lists:
@@ -340,6 +368,16 @@ Write an F# function interleave(xs,ys) that interleaves two lists:
 	    val it : int list = [1; 4; 2; 5; 3; 6]
 
 Assume that the two lists have the same length.
+```
+
+```
+//Interleave Two Lists
+let rec interleave (xs, ys) = 
+    if List.length xs <> List.length ys then printf("There is an error ")
+    match xs, ys with
+    |(xs, []) -> xs
+    |([], ys) -> ys
+    |(x::xs, y::ys) -> x :: y :: interleave (xs, ys) ;;
 ```
 ### Q19
 ```
@@ -360,6 +398,16 @@ Paradoxically, although gencut is more general than cut, it is easier to write! 
 Another Hint: To write gencut efficiently, it is quite convenient to use F#'s local let expression (as in the cos_squared example in the Notes).
 ```
 
+```
+//Split a List in Two Equal Parts
+let cut xs = 
+ let n = (List.length xs) / 2 
+ let rec gencut(n, xs) = function
+ |(n,[]) -> ([],[])
+ |(1,x::xs) -> (x::[],xs)
+ |(n,x::xs) -> gencut(n-1,xs);;
+```
+
 ### Q20
 
 ```
@@ -370,6 +418,14 @@ Write an F# function shuffle xs that takes an even-length list, cuts it into two
 	    val it : int list = [1; 5; 2; 6; 3; 7; 4; 8]
 
 (On a deck of cards, this is called a perfect out-shuffle.)
+```
+
+```
+let shuffle xs = interleave ( cut xs) 
+
+let rec myrecursivewhile(deck, shuffleDeck, numberOfShuffles)=
+    match deck, shuffleDeck, numberOfShuffles with
+    | (d1,d2,a) -> if d1 = d2 then a else myrecursivewhile(d1,shuffle d2,a+1) 
 ```
 
 ### Q21
@@ -383,6 +439,17 @@ Write an F# function countshuffles n that counts how many calls to shuffle on a 
 (To see that this result is correct, note that shuffle [1;2;3;4] = [1;3;2;4], and shuffle [1;3;2;4] = [1;2;3;4].) What is countshuffles 52?
 
 Hint: Define an auxiliary function countaux(deck, target) that takes two lists and returns the number of shuffles it takes to make deck equal to target.
+```
+
+```
+let countshuffles n =                           
+    let initDeck = [1..n]                          
+    let intermDeck = shuffle initDeck      
+    let count =  1                       
+    myrecursivewhile(initDeck,intermDeck,count) 
+        
+
+
 ```
 ### Q22
 
