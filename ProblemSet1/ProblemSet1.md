@@ -396,6 +396,7 @@ To implement cut, first define an auxiliary function gencut(n, xs) that cuts xs 
 Paradoxically, although gencut is more general than cut, it is easier to write! (This is an example of Polya's Inventor's Paradox: "The more ambitious plan may have more chances of success.")
 
 Another Hint: To write gencut efficiently, it is quite convenient to use F#'s local let expression (as in the cos_squared example in the Notes).
+
 ```
 
 ```
@@ -558,11 +559,16 @@ We might try the following definition:
 	    | []         -> []
 	    | [x]        -> [x]
 	    | x1::x2::xs -> if x1 <= x2 then x1 :: sort (x2::xs)
-            else x2 :: sort (x1::xs)
+                        else x2 :: sort (x1::xs)
 	  
 
 Analyze the correctness of this definition with respect to the Checklist for Programming with Recursion, being sure to address all three Steps.
 ```
+
+```
+It fails the second step
+```
+
 ### Q26
 ```
 Here is an attempt to write mergesortin F#:
@@ -572,18 +578,18 @@ Here is an attempt to write mergesortin F#:
     | ([], ys)       -> ys
     | (xs, [])       -> xs
     | (x::xs, y::ys) -> if x < y then x :: merge (xs, y::ys)
-		        else y :: merge (x::xs, ys)
+		                else y :: merge (x::xs, ys)
 
     let rec split = function
     | []       -> ([], [])
     | [a]      -> ([a], [])
     | a::b::cs -> let (M,N) = split cs
-		  (a::M, b::N)
+		            (a::M, b::N)
 
     let rec mergesort = function
     | []  -> []
     | L   -> let (M, N) = split L
-             merge (mergesort M, mergesort N)
+                            merge (mergesort M, mergesort N)
 	  
 
     Analyze mergesort with respect to the Checklist for Programming with Recursion, again addressing all three Steps. (Assume that merge and split both work correctly, as indeed they do.)
@@ -599,8 +605,10 @@ The following questions deal with Context Free Grammars.
 Recall the unambiguous grammar for arithmetic expressions discussed in class:
 
   E -> E+T | E-T | T
-	    T -> T*F | T/F | F
+	    T -> T*X | T/X | X
+        X -> F^X | F
 	    F -> i | (E)
+
 
 Modify this grammar to allow an exponentiation operator, ^, so that we can write expressions like i+i^i*i. Of course, your modified grammar should be unambiguous. Give exponentiation higher precedence than the other binary operators and (unlike the other binary operators) make it associate to the right.
 ```
