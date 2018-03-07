@@ -1,16 +1,16 @@
 let rec transpose matrix = 
-  match matrix with   // matrix is a list<list<int>>
-  | row::rows ->      // case when the list of rows is non-empty
-    match row with    // rows is a list<int>
-    | col::cols ->    // case when the row is non-empty
+    match matrix with   // matrix is a list<list<int>>
+    | row::rows ->      // case when the list of rows is non-empty
+        match row with    // rows is a list<int>
+        | col::cols ->    // case when the row is non-empty
       // Take first elements from all rows of the matrix
-      let first = List.map List.head matrix
-      // Take remaining elements from all rows of the matrix
-      // and then transpose the resulting matrix
-      let rest = transpose (List.map List.tail matrix) 
-      first :: rest
-    | _ -> []
-  | _ -> [] 
+          let first = List.map List.head matrix
+          // Take remaining elements from all rows of the matrix
+          // and then transpose the resulting matrix
+          let rest = transpose (List.map List.tail matrix) 
+          first :: rest
+        | _ -> []
+    | _ -> [] 
 let rec inner xs ys =
     match (xs, ys) with
     | ([],[]) -> 0
