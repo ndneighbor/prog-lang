@@ -1,4 +1,6 @@
 type TERMINAL = IF|THEN|ELSE|BEGIN|END|PRINT|SEMICOLON|ID|EOF
+open System.Xml.Xsl.Runtime
+open System.Xml.Xsl.Runtime
 
 let eat token = function 
 | [] -> failwith "Early termination"
@@ -7,13 +9,18 @@ let eat token = function
     then xs
     else failwith (sprintf "want %A, got %A" token x)
 
+let rec E = function
+| [] -> failwith "Early termination or missing EOF"
+| ID::xs -> xs
+| x::xs -> failwith "error"
+
 let rec L = function 
 | [] -> failwith "Early termination or missing EOF"
 | x::xs ->
     match x with
-    | END -> printf "We are done here"
+    | END -> xs
     | SEMICOLON -> xs |> S |> L
-let rec S = function 
+and  S = function 
 | [] -> failwith "Early termination or missing EOF"
 | x::xs -> 
     match x with
@@ -25,20 +32,14 @@ let rec S = function
     | _ -> failwith (sprintf "S: want 0 got %A" x)
 
 
-let rec E = function
-| [] -> failwith "Early termination or missing EOF"
-| ID -> eat
 
-// let accept = function
-//     printfn "Its good"
 
-// let error = function
-//     failwith "Nope"
+let accept() = printfn "Its good"
+
+let error() = printfn "Nope"
 
 let test_program program =
   let result = program |> S
   match result with 
   | [] -> failwith "Early termination or missing EOF"
-  | x::xs -> if x = EOF then accept else error
-
-let checkSyntax = function
+  | x::xs -> if x = EOF then accept() else error()
